@@ -8,6 +8,8 @@ Apple **requires macOS + Xcode** to produce a real `.ipa`. You cannot compile iO
 
 GitHub Actions → **Build Android APK (unsigned)** → download `StillAlive-Android-unsigned`.
 
+The workflow runs on **Linux** (not Windows) so the Unity Docker image has enough disk space.
+
 Install on Android with “unknown sources” / sideloading.
 
 ### 2. iOS IPA (no Mac on your desk)
