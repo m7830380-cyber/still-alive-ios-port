@@ -1,8 +1,7 @@
-using TdGame;
-using UnityEngine;
-
 namespace MEdge.Engine
 {
+	using TdGame;
+	using UnityEngine;
 	public static partial class Input_Unity
 	{
 #if UNITY_IOS || UNITY_ANDROID
