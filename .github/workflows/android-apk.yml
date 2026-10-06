@@ -35,7 +35,6 @@ jobs:
         run: |
           cp -a overlay/overlay/. game/
           cp overlay/overlay/PORT.md game/PORT.md
-          bash overlay/tools/ci-split-assemblies.sh game
 
       - name: Commit overlay for game-ci
         working-directory: game
