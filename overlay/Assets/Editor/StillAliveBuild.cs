@@ -18,7 +18,7 @@ public static class StillAliveBuild
 
         if (target == BuildTarget.iOS)
         {
-            EditorUserBuildSettings.iOSBuildConfigType = iOSBuildType.Release;
+            EditorUserBuildSettings.iOSXcodeBuildConfig = XcodeBuildConfig.Release;
             PlayerSettings.iOS.appleDeveloperTeamID = "";
             PlayerSettings.iOS.appleEnableAutomaticSigning = false;
         }
