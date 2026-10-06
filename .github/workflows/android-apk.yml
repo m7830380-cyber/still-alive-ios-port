@@ -1,0 +1,54 @@
+name: Build Android APK (unsigned)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout Still Alive upstream
+        uses: actions/checkout@v4
+        with:
+          repository: Eideren/Mirror-s-Edge
+          lfs: true
+          path: game
+
+      - name: Checkout overlay
+        uses: actions/checkout@v4
+        with:
+          path: overlay
+
+      - name: Apply overlay
+        shell: bash
+        run: |
+          cp -a overlay/overlay/. game/
+          cp overlay/overlay/PORT.md game/PORT.md
+
+      - name: Commit overlay for game-ci
+        working-directory: game
+        run: |
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "github-actions"
+          git add -A
+          git commit -m "Apply mobile overlay (slim anim stubs)"
+
+      - uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: game
+          unityVersion: 2022.3.5f1
+          targetPlatform: Android
+          buildsPath: build
+          buildMethod: StillAliveBuild.BuildAndroidApk
+          customParameters: -nographics -batchmode -maxParallelJobs 1
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: StillAlive-Android-unsigned
+          path: build/Android/StillAlive.apk
+          if-no-files-found: error
