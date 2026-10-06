@@ -23,7 +23,15 @@ jobs:
       - name: Apply overlay
         run: |
           rsync -a overlay/overlay/ game/
-          cat overlay/overlay/PORT.md >> game/PORT.md 2>/dev/null || cp overlay/overlay/PORT.md game/PORT.md
+          cp overlay/overlay/PORT.md game/PORT.md
+
+      - name: Commit overlay for game-ci
+        working-directory: game
+        run: |
+          git config user.email "ci@users.noreply.github.com"
+          git config user.name "github-actions"
+          git add -A
+          git commit -m "Apply mobile/iOS overlay"
 
       - uses: game-ci/unity-builder@v4
         env:
