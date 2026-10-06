@@ -1,26 +1,25 @@
-# Build without a Mac
+# Build without a Mac (and without paid CI)
 
-Apple **requires macOS + Xcode** to produce a real `.ipa`. You cannot compile iOS on Windows alone.
+## Money and runners — what you actually need
 
-## What you can do from Windows
+| Goal | Mac at home? | Paid GitHub runner? |
+|------|----------------|---------------------|
+| **Android APK** | No | **No** — uses free **Linux** runners |
+| **Windows play / dev** | No | No |
+| **iPhone .ipa** | Yes, *somewhere* (see below) | Only if you pay for bigger Mac runners; **not required** for Android |
 
-### 1. Android APK (no Mac) — recommended
+GitHub’s **macos-14** runner is free within your account limits, but this project **runs out of compiler memory** there. That is **not** the same as “you must buy macos-14-xlarge.” For this repo, **skip iOS in CI** unless you have access to a Mac or paid larger runners.
 
-GitHub Actions → **Build Android APK (unsigned)** → download `StillAlive-Android-unsigned`.
+## Recommended: Android APK (free)
 
-The workflow runs on **Linux** (not Windows) so the Unity Docker image has enough disk space.
+1. Repo: [still-alive-ios-port](https://github.com/m7830380-cyber/still-alive-ios-port)
+2. **Actions** → **Build Android APK (unsigned)** → **Run workflow**
+3. When it finishes (~10–15 min), download **StillAlive-Android-unsigned**
+4. Install on an Android phone (allow installs from unknown sources / sideload)
 
-Install on Android with “unknown sources” / sideloading.
+Uses **Ubuntu + Unity Docker** — no Apple hardware, no paid runner tier.
 
-### 2. iOS IPA (no Mac on your desk)
-
-Use **GitHub Actions** → **Build iOS (unsigned)** on our repo. That runs on Apple’s cloud Macs.
-
-We replaced two giant animation `.cs` files (~1MB each) with **slim stubs** in the overlay so Unity’s compiler does not crash in CI. Movement may look wrong until full anim data is split or moved out of C#.
-
-If iOS still fails, enable **GitHub billing** and switch the workflow to `macos-14-xlarge` (more RAM).
-
-### 3. Local Windows (Unity Hub)
+## Windows only (no GitHub)
 
 1. Clone [Eideren/Mirror-s-Edge](https://github.com/Eideren/Mirror-s-Edge) with Git LFS.
 2. Apply overlay:
@@ -29,21 +28,34 @@ If iOS still fails, enable **GitHub billing** and switch the workflow to `macos-
    .\tools\Apply-Overlay.ps1 -OverlayRoot .\overlay -TargetRoot C:\path\to\Mirror-s-Edge
    ```
 
-3. Install **Unity 2022.3.5f1** + **Android Build Support**.
+3. Unity Hub: **2022.3.5f1** + **Android Build Support** (Personal license is fine).
 4. Build:
 
    ```powershell
-   & "C:\Program Files\Unity\Hub\Editor\2022.3.5f1\Editor\Unity.exe" `
-     -batchmode -quit -nographics `
-     -projectPath "C:\path\to\Mirror-s-Edge" `
-     -executeMethod StillAliveBuild.BuildAndroidApk `
-     -logFile build.log
+   .\tools\Build-Android-Local.ps1 -ProjectPath C:\path\to\Mirror-s-Edge
    ```
 
-   Output: `build\Android\StillAlive.apk`
+   APK: `build\Android\Android.apk`
 
-iOS export from Windows Editor is **not supported** by Unity.
+You can also open `Assets/Scenes/Cranes_Off.unity` and press Play on PC.
 
-## Why we “separated” animation code
+## iPhone / iOS — honest limits
 
-`AS_C1P_Unarmed.cs` and `AS_F3P_Unarmed.cs` are ~100k lines each. Roslyn dies with `OutOfMemoryException` / “array dimensions exceeded” on GitHub runners. The overlay stubs keep the same API but drop baked animation data for CI/mobile until a proper asset pipeline exists.
+- Unity **cannot** export iOS from Windows.
+- A real **.ipa** needs **macOS + Xcode** at least once (export + sign or sideload tooling).
+- **Free GitHub Mac CI** for this codebase currently **fails** (too much C# for the compiler on a standard runner). We stubbed giant animation files; the rest of Still Alive is still huge.
+- **You do not need a paid runner** if you are okay **not** shipping iOS from this repo.
+
+Ways to get on iPhone **without paying GitHub**:
+
+- Use **any** Mac you can borrow (even once): build in Unity → Xcode → device.
+- Use **Android** instead (same overlay, free CI).
+- Wait for a slimmer mobile port (smaller assemblies / asset pipeline) — not done yet.
+
+The workflow **iOS IPA (info only)** in Actions only prints this; it does not spend Mac minutes.
+
+Archived full iOS pipeline: `.github/workflows/ios-unsigned.yml.archive` (rename to `.yml` if you have Mac CI that can compile the project).
+
+## Animation stubs (why mobile builds differ from desktop Still Alive)
+
+`AS_C1P_Unarmed.cs` / `AS_F3P_Unarmed.cs` are ~100k lines each and crash Roslyn in CI. The overlay replaces them with tiny stubs so **Android** can compile. Movement/animations on mobile may be wrong until anim data is moved out of giant C# files.

@@ -1,77 +1,31 @@
-name: Build iOS (unsigned)
+# Unsigned iOS needs macOS + Xcode. The full Unity project does not compile on GitHub's
+# free macos-14 runners (Roslyn OOM). Paid macos-14-xlarge is optional, not required for Android.
+# Full pipeline kept in ios-unsigned.yml.archive for anyone with Mac access later.
+
+name: iOS IPA (info only)
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: macos-14
-    timeout-minutes: 180
+  info:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Still Alive upstream
-        uses: actions/checkout@v4
-        with:
-          repository: Eideren/Mirror-s-Edge
-          lfs: true
-          path: game
-
-      - name: Checkout overlay
-        uses: actions/checkout@v4
-        with:
-          path: overlay
-
-      - name: Apply overlay
+      - uses: actions/checkout@v4
+      - name: Why there is no free iPhone build here
         run: |
-          rsync -a overlay/overlay/ game/
-          cp overlay/overlay/PORT.md game/PORT.md
+          cat <<'EOF'
+          iPhone (.ipa) from Unity ALWAYS needs Apple macOS + Xcode at some point.
+          You do NOT need a Mac at home for Android — use "Build Android APK (unsigned)" (Linux, free).
 
-      - name: Commit overlay for game-ci
-        working-directory: game
-        run: |
-          git config user.email "ci@users.noreply.github.com"
-          git config user.name "github-actions"
-          git add -A
-          git commit -m "Apply mobile/iOS overlay"
+          This repo's iOS CI on free GitHub Mac runners fails: ~2,400 C# scripts exhaust compiler RAM.
+          Fixes that cost money (macos-14-xlarge) or need a real Mac (build once locally).
 
-      - uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
-        with:
-          projectPath: game
-          unityVersion: 2022.3.5f1
-          targetPlatform: iOS
-          buildsPath: build
-          buildMethod: StillAliveBuild.BuildIosUnsigned
-          customParameters: -nographics -batchmode -maxParallelJobs 1 -disable-assembly-updater
+          Practical options without spending on runners:
+            • Android APK via GitHub Actions (recommended)
+            • Play Still Alive on Windows (Unity / upstream project)
+            • Someday: WebGL in browser on a phone (not set up yet)
 
-      - name: Upload Unity logs on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unity-logs
-          path: |
-            game/Logs
-            ~/.local/share/unity3d/Editor.log
-          if-no-files-found: ignore
-
-      - name: Xcode build (no code sign)
-        working-directory: game
-        run: |
-          set -euo pipefail
-          PROJECT=$(find ../build/iOS -name '*.xcodeproj' -maxdepth 2 | head -1)
-          xcodebuild -project "$PROJECT" -scheme Unity-iPhone -configuration Release -sdk iphoneos \
-            -derivedDataPath ../build/DerivedData CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
-
-      - name: Create unsigned IPA
-        run: |
-          APP=$(find build/DerivedData -name '*.app' -type d | head -1)
-          mkdir -p Payload && cp -R "$APP" Payload/
-          zip -qr StillAlive-unsigned.ipa Payload
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: StillAlive-iOS-unsigned
-          path: StillAlive-unsigned.ipa
+          If you ever get ANY Mac (friend, school, old laptop): open the Unity project,
+          File → Build Settings → iOS, then Xcode archive. See BUILD-WITHOUT-MAC.md.
+          EOF
