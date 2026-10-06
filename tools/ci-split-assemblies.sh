@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Roslyn OOMs when compiling ~2400 Integration scripts in one assembly on 14 GB CI runners.
-set -euo pipefail
+set -eu
 
 GAME="${1:-game}"
 INT="$GAME/Assets/Source/Integration"
