@@ -12,9 +12,9 @@ namespace MEdge.Engine
 
 		static void SampleMobileInput(TdPlayerInput uInput, TdPlayerController controller, float dt)
 		{
-			for (var i = 0; i < Input.touchCount; i++)
+			for (var i = 0; i < UnityEngine.Input.touchCount; i++)
 			{
-				var touch = Input.GetTouch(i);
+				var touch = UnityEngine.Input.GetTouch(i);
 				var x = touch.position.x / Screen.width;
 
 				if (touch.phase == TouchPhase.Began)
@@ -35,9 +35,9 @@ namespace MEdge.Engine
 			if (moveFingerId >= 0)
 			{
 				var found = false;
-				for (var i = 0; i < Input.touchCount; i++)
+				for (var i = 0; i < UnityEngine.Input.touchCount; i++)
 				{
-					var touch = Input.GetTouch(i);
+					var touch = UnityEngine.Input.GetTouch(i);
 					if (touch.fingerId != moveFingerId)
 						continue;
 					found = true;
@@ -59,9 +59,9 @@ namespace MEdge.Engine
 			if (lookFingerId >= 0)
 			{
 				var found = false;
-				for (var i = 0; i < Input.touchCount; i++)
+				for (var i = 0; i < UnityEngine.Input.touchCount; i++)
 				{
-					var touch = Input.GetTouch(i);
+					var touch = UnityEngine.Input.GetTouch(i);
 					if (touch.fingerId != lookFingerId)
 						continue;
 					found = true;
@@ -90,11 +90,11 @@ namespace MEdge.Engine
 			}
 
 			// Bottom overlay buttons (simple regions — tune in play mode)
-			if (Input.touchCount > 0)
+			if (UnityEngine.Input.touchCount > 0)
 			{
-				for (var i = 0; i < Input.touchCount; i++)
+				for (var i = 0; i < UnityEngine.Input.touchCount; i++)
 				{
-					var t = Input.GetTouch(i);
+					var t = UnityEngine.Input.GetTouch(i);
 					if (t.phase != TouchPhase.Began)
 						continue;
 					var p = t.position;
