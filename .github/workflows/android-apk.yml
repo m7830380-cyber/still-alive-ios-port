@@ -60,5 +60,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: StillAlive-Android-unsigned
-          path: build/Android/StillAlive.apk
+          path: build/Android/Android.apk
           if-no-files-found: error

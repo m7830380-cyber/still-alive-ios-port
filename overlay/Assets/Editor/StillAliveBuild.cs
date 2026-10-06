@@ -9,7 +9,7 @@ public static class StillAliveBuild
 
     public static void BuildIosUnsigned() => BuildMobile(BuildTarget.iOS, "build/iOS");
 
-    public static void BuildAndroidApk() => BuildMobile(BuildTarget.Android, "build/Android/StillAlive.apk");
+    public static void BuildAndroidApk() => BuildMobile(BuildTarget.Android, "build/Android/Android.apk");
 
     static void BuildMobile(BuildTarget target, string outputPath)
     {

@@ -16,4 +16,4 @@ if ($LASTEXITCODE -ne 0) {
     throw "Unity exited $LASTEXITCODE. See $log"
 }
 
-Write-Host "APK: $(Join-Path $ProjectPath 'build\Android\StillAlive.apk')"
+Write-Host "APK: $(Join-Path $ProjectPath 'build\Android\Android.apk')"
