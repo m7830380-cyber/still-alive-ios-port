@@ -8,17 +8,6 @@ jobs:
     runs-on: macos-14
     timeout-minutes: 180
     steps:
-      - name: Free disk space
-        uses: jlumbroso/free-disk-space@main
-        with:
-          tool-cache: false
-          android: false
-          dotnet: false
-          haskell: true
-          large-packages: true
-          docker-images: true
-          swap-storage: true
-
       - name: Checkout Still Alive upstream
         uses: actions/checkout@v4
         with:
