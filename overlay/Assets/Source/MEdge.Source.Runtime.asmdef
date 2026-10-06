@@ -1,0 +1,17 @@
+{
+    "name": "MEdge.Source.Runtime",
+    "rootNamespace": "MEdge",
+    "references": [
+        "MEdge.Source.Integration",
+        "ReflectionAssembly"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
